@@ -1,0 +1,76 @@
+#!/usr/bin/python3
+
+# import library
+import argparse
+import random as rand
+
+# open the file
+file = open("words.txt", "r")
+
+# initialize the word list
+words_list = []
+
+# append to the word list 
+for line in file:
+    each_line = line.strip()
+    words_list.append(each_line)
+
+# symbol lists
+symbols = ['!', '@', '#', '$', '%', '&', '^', '*', '(', ')', '-', '_', '+', '=']
+
+# define Parser 
+parser = argparse.ArgumentParser(description = "Generate a secure, memorable password using the XKCD method ", usage = "usage: xkcdpwgen [-h] [-w WORDS] [-c CAPS] [-n NUMBERS] [-s SYMBOLS]")
+
+# Set up arguments 
+parser.add_argument("-w", "--words", type=int, help = "include WORDS words in the password (default=4)", default=4)
+parser.add_argument("-c", "--caps", type=int, help = " insert NUMBERS random numbers in the password (default=0)", default=0)
+parser.add_argument("-n", "--numbers",type=int, help = "insert NUMBERS random numbers in the password (default=0)", default=0)
+parser.add_argument("-s", "--symbols",type=int, help = "insert SYMBOLS random symbols in the password (default=0)", default=0)
+args = parser.parse_args()
+ 
+# initialize the list 
+temp_list = []
+
+# add words with random indices to temp_list
+for int in range(args.words):
+    random_integer = rand.randint(0, len(words_list) - 1)
+    temp_list.append(words_list[random_integer].lower())
+
+# this empty list is to get rid of duplications for caps 
+dup_list_c = []
+
+# convert words to caps with random indices
+for int in range(args.caps):
+    random_index_1 = rand.randint(0, len(temp_list) - 1);
+    while (random_index_1 in dup_list_c):
+        random_index_1 = rand.randint(0, len(temp_list) - 1);
+    temp_list[random_index_1] = temp_list[random_index_1].capitalize()
+    dup_list_c.append(random_index_1);
+
+# this empty list is to get rid of duplications for numbers  
+dup_list_n = []
+
+# add random numbers to random indices in our password 
+for int in range(args.numbers):
+    random_integer = rand.randint(0, 9);
+    random_index_2 = rand.randint(0, len(temp_list) - 1)
+    while (random_index_2 in dup_list_n):
+        random_index_2 = rand.randint(0, len(temp_list) - 1);
+    temp_list.insert(random_index_2, str(random_integer))
+    dup_list_n.append(random_index_2);
+
+# this empty list is to get rid of duplications for symbols
+dup_list_s = []
+
+# add random symbols to random indices in our password
+for int in range(args.symbols):
+    random_index_symbols = rand.randint(0, len(symbols) - 1)
+    random_index_3 = rand.randint(0, len(temp_list) - 1)
+    while (random_index_3 in dup_list_s):
+        random_index_3 = rand.randint(0, len(temp_list) - 1);
+    temp_list.insert(random_index_3, symbols[random_index_symbols])
+    dup_list_s.append(random_index_3);
+
+# combine the elements in the temp_list to string and print it
+password = "".join(temp_list)
+print(password)
